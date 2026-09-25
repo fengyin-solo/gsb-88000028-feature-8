@@ -20,6 +20,7 @@ defineProps({
     <p class="eyebrow">{{ eyebrow }}</p>
     <h2>{{ title }}</h2>
     <p class="description">{{ description }}</p>
+    <slot />
   </header>
 </template>
 

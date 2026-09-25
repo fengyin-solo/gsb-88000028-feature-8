@@ -7,6 +7,8 @@ defineProps({
     required: true,
   },
 })
+
+defineEmits(['complete'])
 </script>
 
 <template>
@@ -17,11 +19,12 @@ defineProps({
       <span>风险</span>
       <span>负责人</span>
       <span>说明</span>
+      <span>状态</span>
     </div>
     <div
       v-for="row in rows"
       :key="`${row.title}-${row.owner}`"
-      class="task-row"
+      :class="['task-row', { 'task-row--done': row.done }]"
     >
       <span>{{ row.title }}</span>
       <span>{{ row.stage }}</span>
@@ -30,6 +33,17 @@ defineProps({
       </span>
       <span>{{ row.owner }}</span>
       <span>{{ row.note }}</span>
+      <span>
+        <button
+          v-if="!row.done"
+          type="button"
+          class="complete-btn"
+          @click="$emit('complete', row)"
+        >
+          标记完成
+        </button>
+        <span v-else class="done-pill">已完成</span>
+      </span>
     </div>
   </div>
 </template>
@@ -43,11 +57,15 @@ defineProps({
 
 .task-row {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 0.6fr 0.7fr 1.3fr;
+  grid-template-columns: 1.2fr 0.8fr 0.6fr 0.7fr 1.3fr 0.6fr;
   gap: 12px;
   align-items: center;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.72);
+}
+
+.task-row--done {
+  opacity: 0.6;
 }
 
 .task-row + .task-row {
@@ -85,13 +103,37 @@ defineProps({
   color: #366338;
 }
 
+.complete-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(93, 67, 34, 0.4);
+  background: #5d4322;
+  color: #fff8eb;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.complete-btn:hover {
+  background: #4c351a;
+}
+
+.done-pill {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #d9ead9;
+  color: #366338;
+  font-size: 0.78rem;
+}
+
 @media (max-width: 900px) {
   .task-table {
     overflow-x: auto;
   }
 
   .task-row {
-    min-width: 780px;
+    min-width: 860px;
   }
 }
 </style>

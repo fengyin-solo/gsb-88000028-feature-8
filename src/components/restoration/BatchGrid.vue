@@ -6,7 +6,13 @@ defineProps({
     type: Array,
     required: true,
   },
+  completable: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+defineEmits(['complete'])
 </script>
 
 <template>
@@ -14,7 +20,7 @@ defineProps({
     <article
       v-for="item in items"
       :key="item.code"
-      class="batch-card"
+      :class="['batch-card', { 'batch-card--done': item.processed }]"
     >
       <div class="batch-head">
         <small>批次 {{ item.code }}</small>
@@ -24,8 +30,18 @@ defineProps({
       </div>
       <h4>{{ item.title }}</h4>
       <p>页码：{{ item.pages }}</p>
-      <p>阶段：{{ item.status }}</p>
+      <p>阶段：{{ item.processed ? '已处理' : item.status }}</p>
+      <p>积压：{{ item.backlogDays }} 天 · {{ item.volumes }} 册</p>
       <small>{{ item.note }}</small>
+      <button
+        v-if="completable && !item.processed"
+        type="button"
+        class="complete-btn"
+        @click="$emit('complete', item.code)"
+      >
+        标记处理完成
+      </button>
+      <span v-else-if="completable" class="done-tag">已完成处理</span>
     </article>
   </div>
 </template>
@@ -42,6 +58,11 @@ defineProps({
   border-radius: 20px;
   background: #f4ebda;
   border: 1px solid rgba(109, 80, 40, 0.08);
+}
+
+.batch-card--done {
+  opacity: 0.62;
+  border-style: dashed;
 }
 
 .batch-head {
@@ -91,6 +112,31 @@ p + small {
 .risk-pill--low {
   background: #d9ead9;
   color: #366338;
+}
+
+.complete-btn {
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(93, 67, 34, 0.4);
+  background: #5d4322;
+  color: #fff8eb;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.complete-btn:hover {
+  background: #4c351a;
+}
+
+.done-tag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #d9ead9;
+  color: #366338;
+  font-size: 0.78rem;
 }
 
 @media (max-width: 960px) {
