@@ -21,6 +21,8 @@ export const restorationBatches = [
     risk: 'high',
     status: '补纸前',
     note: '虫道集中在装订线外沿。',
+    waitingDays: 16,
+    state: 'pending',
   },
   {
     code: 'B-11',
@@ -29,6 +31,8 @@ export const restorationBatches = [
     risk: 'medium',
     status: '控湿中',
     note: '需先降湿 48 小时，再进入纤维加固。',
+    waitingDays: 9,
+    state: 'pending',
   },
   {
     code: 'C-02',
@@ -37,7 +41,39 @@ export const restorationBatches = [
     risk: 'low',
     status: '归档前',
     note: '边角缺损明显，建议先做透明托裱。',
+    waitingDays: 3,
+    state: 'pending',
   },
+]
+
+// 同一批次可能被多次标记，提醒统计时按批次代码合并，不重复计数
+export const restorationAlerts = [
+  {
+    code: 'A-03',
+    flaggedAt: '2026-09-12',
+    reason: '虫道向版心扩散，需优先固色。',
+  },
+  {
+    code: 'A-03',
+    flaggedAt: '2026-09-20',
+    reason: '复查发现新虫道，维持优先处理。',
+  },
+  {
+    code: 'B-11',
+    flaggedAt: '2026-09-16',
+    reason: '控湿超过 48 小时仍未转入纤维加固。',
+  },
+  {
+    code: 'C-02',
+    flaggedAt: '2026-09-22',
+    reason: '封套尺寸未确认，归档前流程受阻。',
+  },
+]
+
+// 容量字段缺失时视为数据未知，提醒不据此升级优先级
+export const restorationCapacity = [
+  { room: '修复室 1', totalSlots: 4, occupiedSlots: 3 },
+  { room: '修复室 2', totalSlots: 6, occupiedSlots: null },
 ]
 
 export const restorationEnvironment = [
@@ -67,24 +103,30 @@ export const restorationSteps = [
 
 export const restorationTasks = [
   {
+    code: 'A-03',
     title: '明抄本县志残卷',
     stage: '补纸前',
     risk: 'high',
     owner: '韩澈',
     note: '虫道贯穿标题栏，需先固色。',
+    done: false,
   },
   {
+    code: 'B-11',
     title: '碑帖拓片册页',
     stage: '控湿中',
     risk: 'medium',
     owner: '陆宁',
     note: '边缘卷曲，可延后压平。',
+    done: false,
   },
   {
+    code: 'C-02',
     title: '戏曲抄本散页',
     stage: '归档前',
     risk: 'low',
     owner: '周恬',
     note: '等待封套尺寸确认。',
+    done: false,
   },
 ]

@@ -1,31 +1,43 @@
 <script setup>
+import { computed } from 'vue'
+
 import PanelSection from '../components/common/PanelSection.vue'
 import StatCard from '../components/common/StatCard.vue'
 import BatchGrid from '../components/restoration/BatchGrid.vue'
 import EnvironmentCards from '../components/restoration/EnvironmentCards.vue'
 import HeroBanner from '../components/restoration/HeroBanner.vue'
+import ReminderPanel from '../components/restoration/ReminderPanel.vue'
 import {
-  restorationBatches,
   restorationEnvironment,
   restorationHero,
   restorationSteps,
 } from '../data/restorationData'
 import { useRestorationOverview } from '../composables/useRestorationOverview'
+import { useRestorationReminders } from '../composables/useRestorationReminders'
+import { useRestorationState } from '../composables/restorationState'
 
-const { batchCount, environmentCount, highRiskCount, ownerCount } =
-  useRestorationOverview()
+const { state, processBatch } = useRestorationState()
+const { batchCount, highRiskCount, ownerCount } = useRestorationOverview()
+const { reminders, reminderCount, capacityStatus, mergedFlagCount } =
+  useRestorationReminders()
 
-const statCards = [
+const statCards = computed(() => [
   { label: '在册批次', value: batchCount.value },
+  { label: '待处理提醒', value: reminderCount.value },
   { label: '高风险任务', value: highRiskCount.value },
-  { label: '环境指标', value: environmentCount.value },
   { label: '参与修复师', value: ownerCount.value },
-]
+])
 </script>
 
 <template>
   <div class="view-stack">
     <HeroBanner :hero="restorationHero" />
+
+    <ReminderPanel
+      :reminders="reminders"
+      :capacity="capacityStatus"
+      :merged-count="mergedFlagCount"
+    />
 
     <section class="stats-grid">
       <StatCard
@@ -38,7 +50,7 @@ const statCards = [
 
     <section class="two-column">
       <PanelSection title="重点批次" badge="优先处理">
-        <BatchGrid :items="restorationBatches" />
+        <BatchGrid :items="state.batches" @complete="processBatch" />
       </PanelSection>
 
       <PanelSection title="当日工序" badge="修复流程">

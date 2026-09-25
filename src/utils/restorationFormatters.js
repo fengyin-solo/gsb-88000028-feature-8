@@ -16,3 +16,22 @@ export function riskMeta(risk) {
 
   return map[risk] ?? map.low
 }
+
+export function reminderTierMeta(tier) {
+  const map = {
+    urgent: {
+      label: '紧急',
+      tone: 'urgent',
+    },
+    soon: {
+      label: '优先',
+      tone: 'soon',
+    },
+    normal: {
+      label: '常规',
+      tone: 'normal',
+    },
+  }
+
+  return map[tier] ?? map.normal
+}
